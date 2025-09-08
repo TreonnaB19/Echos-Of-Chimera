@@ -37,3 +37,16 @@ Our objectives for this class project include:
 * **`Technical Execution`**: Showcase proficiency in game design principles and engine capabilities.
 
 Echoes of Chimera is a project focused on building a tense, atmospheric horror experience that prioritizes strategic thinking and survival over combat.
+
+## Developers
+**Studio Name: _VoidBound Studios_**
+
+_**Team:**_
+
+Treonna Gardner
+
+Paul Lacap
+
+Jacob Lemons
+
+Alex Lu
