@@ -25,7 +25,7 @@ Survival depends on avoiding detection. Enemies patrol and react to sound. You m
 Sound is your primary tool. Listen for the distinct noises of the creatures to predict their movements. Be cautious, as every action you take—stepping on glass or opening a door—creates sound that can attract them.
 
 ### `Resource Management`
-Resources are scarce. You have a handgun with limited ammo, a flashlight with a finite battery, a multi-tool, and a few medical supplies. Every decision on how and when to use these items is critical.
+Resources are scarce. You have a handgun with limited ammo, a flashlight with a finite battery, a multi-tool, and a few medical supplies. Every decision on how and when to use these items is critical. However, there will be resources around the facility for you to find. 
 
 ## Project Goals
 
