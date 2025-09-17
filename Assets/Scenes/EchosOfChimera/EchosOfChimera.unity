@@ -292,7 +292,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 11
   m_Type: 1
-  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
@@ -373,6 +373,7 @@ GameObject:
   - component: {fileID: 183221584}
   - component: {fileID: 183221583}
   - component: {fileID: 183221582}
+  - component: {fileID: 183221585}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -421,7 +422,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 70
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
@@ -454,6 +455,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1675152975}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &183221585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 183221581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecb0d83512aff5d4082ba8f44d1a7238, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &188327552 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 470138, guid: dc8f3955c063af240afd23143f496335, type: 3}
