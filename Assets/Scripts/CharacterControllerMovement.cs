@@ -75,7 +75,8 @@ public class CharacterControllerMovement : MonoBehaviour
         xRot = Mathf.Clamp(xRot, -90f, 90f);
         PlayerCamera.localRotation = Quaternion.Euler(xRot, 0f, 0f);
 
-        transform.Rotate(0f, mouseX * Sensitivity * Time.deltaTime, 0f, Space.Self);
+        // Allows for player rotation
+        transform.Rotate(0f, mouseX * Sensitivity, 0f, Space.Self);
     }
 
     private void UpdateAnimations()
