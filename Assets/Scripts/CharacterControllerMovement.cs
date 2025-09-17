@@ -27,7 +27,7 @@ public class CharacterControllerMovement : MonoBehaviour
 
     void Update()
     {
-        PlayerMovementInput = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
+        PlayerMovementInput = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical"));
         PlayerMouseInput = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
 
         MovePlayer();
@@ -64,11 +64,18 @@ public class CharacterControllerMovement : MonoBehaviour
 
     private void MovePlayerCamera()
     {
-        xRot = Mathf.Clamp(xRot, -90f, 90f);
-        xRot -= PlayerMouseInput.y * Sensitivity;
+        float mouseX = Input.GetAxisRaw("Mouse X");
+        float mouseY = Input.GetAxisRaw("Mouse Y");
 
-        transform.Rotate(0f, PlayerMouseInput.x * Sensitivity, 0f);
-        PlayerCamera.transform.localRotation = Quaternion.Euler(xRot, 0f, 0f);
+        // Avoids drift
+        if (Mathf.Abs(mouseX) < 0.0005f) mouseX = 0;
+        if (Mathf.Abs(mouseY) < 0.0005f) mouseY = 0;
+
+        xRot -= mouseY * Sensitivity;
+        xRot = Mathf.Clamp(xRot, -90f, 90f);
+        PlayerCamera.localRotation = Quaternion.Euler(xRot, 0f, 0f);
+
+        transform.Rotate(0f, mouseX * Sensitivity * Time.deltaTime, 0f, Space.Self);
     }
 
     private void UpdateAnimations()
