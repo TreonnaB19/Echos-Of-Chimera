@@ -23,9 +23,17 @@ public class CharacterControllerMovement : MonoBehaviour
     [SerializeField] private float gravity = -9.81f;   // keep negative
 
     [Header("Crouch (view & capsule)")]
-    [SerializeField] private float standCameraY   = 1.6f;
-    [SerializeField] private float crouchCameraY  = 1.0f;
-    [SerializeField] private float cameraLerpSpeed = 8f;
+    [SerializeField] private float standCamY   = 1.7f;
+    [SerializeField] private float standCamZ   = 0.2f;
+    [SerializeField] private float crouchCamY  = 0.9f;
+    [SerializeField] private float crouchCamZ  = 0.5f;
+    [SerializeField] private float camLerpSpeed = 12f;
+    [Header("Pitch limits")]
+    [SerializeField] float lookDownStand  = -85f;
+    [SerializeField] float lookDownCrouch = -70f; // tighter when crouched
+
+    // Extra push when looking steeply down (prevents hood peek)
+    [SerializeField] float extraZWhenLookingDown = 0.06f;
 
     [SerializeField] private float standHeight   = 2.0f;   // CC height when standing
     [SerializeField] private float crouchHeight  = 1.4f;   // CC height when crouched
@@ -37,8 +45,8 @@ public class CharacterControllerMovement : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
 
         // If not set in Inspector, use current camera Y as standing Y
-        if (Mathf.Approximately(standCameraY, 0f))
-            standCameraY = PlayerCamera.localPosition.y;
+        if (Mathf.Approximately(standCamY, 0f))
+            standCamY = PlayerCamera.localPosition.y;
 
         CharacterAnimator.SetBool("IsCrouching", false);
         CharacterAnimator.SetBool("IsTrulyIdle", false);
@@ -94,39 +102,41 @@ public class CharacterControllerMovement : MonoBehaviour
 
     private void ApplyCrouchAdjustments(bool crouching)
     {
-        // --- Camera height ---
-        float targetCamY = crouching ? crouchCameraY : standCameraY;
-        Vector3 camLocal = PlayerCamera.localPosition;
-        camLocal.y = Mathf.MoveTowards(camLocal.y, targetCamY, cameraLerpSpeed * Time.deltaTime);
-        PlayerCamera.localPosition = camLocal;
+    // target offsets by stance
+    float targetY = crouching ? crouchCamY : standCamY;
+    float baseZ   = crouching ? crouchCamZ : standCamZ;
 
-        // --- CharacterController height/center ---
-        // Keep the bottom of the capsule fixed: bottom = center.y - height/2
-        float bottom = Controller.center.y - Controller.height * 0.5f;
+    // adds a little more Z when looking steeply down
+    float lookDown01 = Mathf.InverseLerp(-30f, -85f, xRot); 
+    float targetZ = baseZ + lookDown01 * extraZWhenLookingDown;
 
-        float targetHeight = crouching ? crouchHeight : standHeight;
-        float newHeight = Mathf.MoveTowards(Controller.height, targetHeight, heightLerpSpeed * Time.deltaTime);
-        Controller.height = newHeight;
+    // apply to pivot (PlayerCamera is the pivot)
+    var lp = PlayerCamera.localPosition;
+    lp.y = Mathf.MoveTowards(lp.y, targetY, camLerpSpeed * Time.deltaTime);
+    lp.z = Mathf.MoveTowards(lp.z, targetZ, camLerpSpeed * Time.deltaTime);
+    PlayerCamera.localPosition = lp;
 
-        // Recompute center so the bottom stays where it was
-        Vector3 c = Controller.center;
-        c.y = bottom + newHeight * 0.5f;
-        Controller.center = c;
+    // keeps feet planted while resizing the capsule
+    float bottom = Controller.center.y - Controller.height * 0.5f;
+    float targetH = crouching ? crouchHeight : standHeight;
+    Controller.height = Mathf.MoveTowards(Controller.height, targetH, heightLerpSpeed * Time.deltaTime);
+    var c = Controller.center; c.y = bottom + Controller.height * 0.5f; Controller.center = c;
     }
+
 
     private void HandleCamera()
     {
-        float mouseX = Input.GetAxisRaw("Mouse X");
-        float mouseY = Input.GetAxisRaw("Mouse Y");
+    float mouseX = Input.GetAxisRaw("Mouse X");
+    float mouseY = Input.GetAxisRaw("Mouse Y");
 
-        // avoid micro drift
-        if (Mathf.Abs(mouseX) < 0.0005f) mouseX = 0f;
-        if (Mathf.Abs(mouseY) < 0.0005f) mouseY = 0f;
+    bool crouching = Input.GetKey(KeyCode.LeftControl);
+    float minPitch = crouching ? lookDownCrouch : lookDownStand;
 
-        xRot = Mathf.Clamp(xRot - mouseY * sensitivity, -90f, 90f);
-        PlayerCamera.localRotation = Quaternion.Euler(xRot, 0f, 0f);
-        transform.Rotate(0f, mouseX * sensitivity, 0f, Space.Self);
+    xRot = Mathf.Clamp(xRot - mouseY * sensitivity, minPitch, 90f);
+    PlayerCamera.localRotation = Quaternion.Euler(xRot, 0f, 0f);
+    transform.Rotate(0f, mouseX * sensitivity, 0f, Space.Self);
     }
+
 
     private void HandleAnimations()
     {
