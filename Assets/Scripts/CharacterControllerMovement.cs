@@ -1,12 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CharacterControllerMovement : MonoBehaviour
 {
-    private Vector3 Velocity;
-    private Vector3 PlayerMovementInput;
-    private Vector2 PlayerMouseInput;
+    private Vector3 velocity;
     private float xRot;
     private float idleTime;
 
@@ -14,76 +10,91 @@ public class CharacterControllerMovement : MonoBehaviour
     [SerializeField] private CharacterController Controller;
     [SerializeField] private Animator CharacterAnimator;
     [Space]
-    [SerializeField] private float Speed;
-    [SerializeField] private float RunSpeed;
-    [SerializeField] private float Sensitivity;
-    [SerializeField] private float Gravity = -9.81f;
+    [SerializeField] private float walkSpeed = 1.5f;
+    [SerializeField] private float runSpeed = 4f;
+    [SerializeField] private float crouchSpeed = 0.75f;
+    [SerializeField] private float sensitivity = 2f;
+    [SerializeField] private float gravity = -9.81f;
 
     void Start()
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+
+        // makes sure animator starts with safe defaults
+        CharacterAnimator.SetBool("IsCrouching", false);
+        CharacterAnimator.SetBool("IsTrulyIdle", false);
     }
 
     void Update()
     {
-        PlayerMovementInput = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical"));
-        PlayerMouseInput = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
-
-        MovePlayer();
-        MovePlayerCamera();
-        UpdateAnimations();
+        HandleMovement();
+        HandleCamera();
+        HandleAnimations();
     }
 
-    private void MovePlayer()
+    private void HandleMovement()
     {
-        Vector3 MoveVector = transform.TransformDirection(PlayerMovementInput);
+        float h = Input.GetAxisRaw("Horizontal");
+        float v = Input.GetAxisRaw("Vertical");
+        Vector3 input = new Vector3(h, 0f, v);
+        if (input.sqrMagnitude > 1f) input.Normalize();
 
-        if (Controller.isGrounded)
-        {
-            Velocity.y = -1f;
-        }
+        // apply crouch or run modifiers
+        bool running = Input.GetKey(KeyCode.LeftShift);
+        bool crouching = Input.GetKey(KeyCode.LeftControl);
+
+        float moveSpeed;
+        if (crouching) moveSpeed = crouchSpeed;
+        else if (running) moveSpeed = runSpeed;
+        else moveSpeed = walkSpeed;
+
+        // gravity
+        if (Controller.isGrounded && velocity.y < 0f)
+            velocity.y = -1f;
+        velocity.y += gravity * Time.deltaTime;
+
+        // move controller
+        Controller.Move((transform.right * h + transform.forward * v) * moveSpeed * Time.deltaTime);
+        Controller.Move(velocity * Time.deltaTime);
+
+        // drive animator "Speed" (0=idle, 1=walk, 2=run)
+        float inputMag = Mathf.Clamp01(input.magnitude);
+        float targetSpeedParam;
+        if (crouching)
+            targetSpeedParam = 0f; // Locomotion is overridden by crouch, so stay at 0
+        else if (running)
+            targetSpeedParam = Mathf.Lerp(1f, 2f, inputMag);
         else
-        {
-            Velocity.y -= Gravity * -2f * Time.deltaTime;
-        }
+            targetSpeedParam = Mathf.Lerp(0f, 1f, inputMag);
 
-        float currentSpeed = Speed;
+        float current = CharacterAnimator.GetFloat("Speed");
+        float smoothed = Mathf.MoveTowards(current, targetSpeedParam, Time.deltaTime * 10f);
+        CharacterAnimator.SetFloat("Speed", smoothed);
 
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            currentSpeed = RunSpeed;
-        }
-
-        // Set the animator's speed parameter based on the current movement speed
-        CharacterAnimator.SetFloat("Speed", MoveVector.magnitude * currentSpeed);
-
-        Controller.Move(MoveVector * currentSpeed * Time.deltaTime);
-        Controller.Move(Velocity * Time.deltaTime);
+        // crouch param
+        CharacterAnimator.SetBool("IsCrouching", crouching);
     }
 
-    private void MovePlayerCamera()
+    private void HandleCamera()
     {
         float mouseX = Input.GetAxisRaw("Mouse X");
         float mouseY = Input.GetAxisRaw("Mouse Y");
 
-        // Avoids drift
         if (Mathf.Abs(mouseX) < 0.0005f) mouseX = 0;
         if (Mathf.Abs(mouseY) < 0.0005f) mouseY = 0;
 
-        xRot -= mouseY * Sensitivity;
-        xRot = Mathf.Clamp(xRot, -90f, 90f);
+        xRot = Mathf.Clamp(xRot - mouseY * sensitivity, -90f, 90f);
         PlayerCamera.localRotation = Quaternion.Euler(xRot, 0f, 0f);
-
-        // Allows for player rotation
-        transform.Rotate(0f, mouseX * Sensitivity, 0f, Space.Self);
+        transform.Rotate(0f, mouseX * sensitivity, 0f, Space.Self);
     }
 
-    private void UpdateAnimations()
+    private void HandleAnimations()
     {
-        bool isMoving = (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0);
+        // idle detection
+        bool moving = (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0);
 
-        if (isMoving)
+        if (moving)
         {
             idleTime = 0f;
             CharacterAnimator.SetBool("IsTrulyIdle", false);
@@ -92,9 +103,7 @@ public class CharacterControllerMovement : MonoBehaviour
         {
             idleTime += Time.deltaTime;
             if (idleTime >= 20f)
-            {
                 CharacterAnimator.SetBool("IsTrulyIdle", true);
-            }
         }
     }
 }
