@@ -1,0 +1,4 @@
+repository "Echos-Of-Chimera/Echos-Of-Chimera 2025-09-22_23-26-51@2475845235340@cloud"
+  path "/"
+    br "/main"
+    co "/main"
