@@ -27,7 +27,7 @@ public class PlayerInventory : MonoBehaviour
     public FlashlightController flashlightController;
 
     private const int HEAL_AMOUNT = 2;       // Health pack heals 2 'hits'
-    private const float RECHARGE_AMOUNT = 25f; // Battery recharges 25%
+    private const float RECHARGE_AMOUNT = 5f; // Battery recharges 5%
 
     void Start()
     {

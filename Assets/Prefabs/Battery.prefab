@@ -10,9 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 4932571068998282212}
   - component: {fileID: 3480341893204520712}
+  - component: {fileID: -5669264217969436476}
   m_Layer: 0
-  m_Name: Battery25
-  m_TagString: Untagged
+  m_Name: Battery
+  m_TagString: Pickup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -56,6 +57,20 @@ CapsuleCollider:
   m_Height: 0.14
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-5669264217969436476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4429883129893493123}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dfe095fa6ea58f4d9f97054ffc7ea80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 1
+  amount: 1
 --- !u!1001 &3749610284945486893
 PrefabInstance:
   m_ObjectHideFlags: 0
