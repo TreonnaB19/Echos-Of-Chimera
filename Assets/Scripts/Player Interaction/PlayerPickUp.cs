@@ -23,14 +23,18 @@ public class PlayerPickup : MonoBehaviour
         if (Physics.Raycast(ray, out hit, pickupRange) && hit.collider.CompareTag("Pickup"))
         {
             pickupPrompt.enabled = true;
-
             if (Input.GetKeyDown(KeyCode.E))
             {
-                // DELEGATE THE PICKUP ACTION to the Inventory script
-                if (playerInventory.AddItem(hit.collider.gameObject))
+                int pickupStatus = playerInventory.AddItem(hit.collider.gameObject);
+
+                if (pickupStatus == 0) // Success
                 {
                     hit.collider.gameObject.SetActive(false);
                     pickupPrompt.enabled = false;
+                }
+                else if (pickupStatus == 1) // Inventory Full
+                {
+                    playerInventory.ShowStatusMessage("FULL");
                 }
             }
         }

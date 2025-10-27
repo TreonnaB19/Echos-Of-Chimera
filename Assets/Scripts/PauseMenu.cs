@@ -9,6 +9,7 @@ public class PauseMenu : MonoBehaviour
 
     public GameObject pauseMenuUI;
     public MonoBehaviour CharacterControllerMovement;
+    public GameObject gameUI;
 
     void Update()
     {
@@ -27,6 +28,7 @@ public class PauseMenu : MonoBehaviour
 
     public void Resume()
     {
+        gameUI.SetActive(true);
         CharacterControllerMovement.enabled = true;
         pauseMenuUI.SetActive(false);
         Time.timeScale = 1f;
@@ -38,6 +40,7 @@ public class PauseMenu : MonoBehaviour
 
     void Pause()
     {
+        gameUI.SetActive(false);
         CharacterControllerMovement.enabled = false;
         pauseMenuUI.SetActive(true);
         Time.timeScale = 0;
