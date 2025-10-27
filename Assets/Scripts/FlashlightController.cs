@@ -79,12 +79,6 @@ public class FlashlightController : MonoBehaviour
         UpdateFlashlightUI();
         Debug.Log($"Flashlight recharged by {percentage}%. Current Power: {currentPower:F1}%");
 
-        // If it was dead and is now recharged, allow it to be turned on again
-        if (!isFlashlightOn && currentPower > 0)
-        {
-            // Optional: You can automatically turn it on here, or let the player press 'F'
-            // flashlight.enabled = true;
-            // isFlashlightOn = true;
-        }
+        
     }
 }

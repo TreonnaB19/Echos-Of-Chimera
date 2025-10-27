@@ -25,6 +25,13 @@ public class PistolController : MonoBehaviour
     [HideInInspector] public bool isPistolEquipped = false;
     private Vector3 originalCameraPosition;
 
+    [Header("Firing Rate")]
+    public float fireRate = 0.5f; // Time in seconds between shots (e.g., 0.5s)
+
+    // Private state variables for the cooldown
+    private float nextTimeToFire = 0f;
+    private bool canFire = true; // Initial state: ready to fire
+
     void Start()
     {
         if (cameraTransform != null)
@@ -52,30 +59,36 @@ public class PistolController : MonoBehaviour
     }
 
     // Called when Left Mouse Button is pressed AND the pistol is equipped.
+    // Called when Left Mouse Button is pressed AND the pistol is equipped.
     public void FirePistol()
     {
-        // 1. AMMO CHECK: Only fire if the player has bullets
+        // 1. FIRE RATE CHECK: Is enough time passed since the last shot?
+        if (Time.time < nextTimeToFire)
+        {
+            return; // Gun is on cooldown, exit the method
+        }
+
+        // 2. AMMO CHECK (The existing logic)
         if (playerInventory != null && playerInventory.totalAmmo > 0)
         {
-            // 2. Consume one bullet and update the UI
+            // --- SHOT IS CONFIRMED ---
+
+            // 3. SET THE NEXT FIRE TIME
+            // The gun cannot fire again until the current time + fireRate
+            nextTimeToFire = Time.time + fireRate;
+
+            // 4. Consume one bullet and update the UI
             playerInventory.totalAmmo--;
             playerInventory.UpdateInventoryUI();
 
-            // 3. Show the muzzle flash
+            // 5. Start visual effects (Muzzle Flash, Recoil, Camera Shake)
             if (muzzleFlash != null)
             {
                 muzzleFlash.SetActive(true);
             }
-
-            // 4. Start visual effects
             StartCoroutine(ShakeCamera());
-
-            // 5. === START PISTOL RECOIL KICK ===
-            // Stop any existing recoil to ensure the gun doesn't wobble if fired rapidly
             StopCoroutine(nameof(RecoilKick));
             StartCoroutine(RecoilKick());
-
-            // 6. Schedule the flash to turn off
             Invoke(nameof(HideMuzzleFlash), 0.05f);
 
             Debug.Log($"Pistol Fired! Ammo remaining: {playerInventory.totalAmmo}");
@@ -83,6 +96,8 @@ public class PistolController : MonoBehaviour
         else
         {
             Debug.Log("Out of ammo! Gun clicks empty.");
+            // Allow the "empty click" sound/animation to play even if on cooldown, 
+            // but the gun won't fire.
         }
     }
 

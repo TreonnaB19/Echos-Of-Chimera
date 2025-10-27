@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
-using UnityEngine.UI; // Needed for RawImage
+using UnityEngine.UI;
+using System;
 
 public class PlayerInventory : MonoBehaviour
 {
@@ -18,6 +19,7 @@ public class PlayerInventory : MonoBehaviour
     public TextMeshProUGUI healthCountUI;
     public TextMeshProUGUI batteryCountUI;
     public TextMeshProUGUI ammoCountUI;
+    public TextMeshProUGUI statusTextUI;
 
     // === EXTERNAL CONTROLLER REFERENCES ===
     [Header("External Controllers")]
@@ -25,7 +27,7 @@ public class PlayerInventory : MonoBehaviour
     public FlashlightController flashlightController;
 
     private const int HEAL_AMOUNT = 2;       // Health pack heals 2 'hits'
-    private const float RECHARGE_AMOUNT = 25f; // Battery recharges 25%
+    private const float RECHARGE_AMOUNT = 5f; // Battery recharges 5%
 
     void Start()
     {
@@ -33,13 +35,15 @@ public class PlayerInventory : MonoBehaviour
     }
 
     // Called by PlayerPickup.cs when 'E' is pressed.
-    public bool AddItem(GameObject item)
+
+    // Update the return type: 0 = Success, 1 = Full
+    public int AddItem(GameObject item)
     {
         PickupItem pickup = item.GetComponent<PickupItem>();
         if (pickup == null)
         {
             Debug.LogError("Pickup item is missing the 'PickupItem' script!");
-            return false;
+            return -1;
         }
 
         bool wasPickedUp = false;
@@ -70,13 +74,39 @@ public class PlayerInventory : MonoBehaviour
         {
             Debug.Log($"Picked up {pickup.type} for +{pickup.amount}.");
             UpdateInventoryUI();
+            return 0;
         }
         else
         {
-            Debug.Log($"Inventory full for {pickup.type}. Cannot pick up.");
+            // Only show "FULL" for capped items (Health & Battery)
+            if (pickup.type != ItemType.Ammo)
+            {
+                return 1; // Inventory Full
+            }
+            return 0; // Ammo doesn't show full message
         }
+    }
 
-        return wasPickedUp;
+    // Method to briefly display a status message
+    public void ShowStatusMessage(string message)
+    {
+        if (statusTextUI != null)
+        {
+            statusTextUI.text = message;
+            statusTextUI.enabled = true;
+
+            // Use Invoke to turn the message off after 1.5 seconds
+            CancelInvoke(nameof(HideStatusMessage)); // Prevent stacking calls
+            Invoke(nameof(HideStatusMessage), 1.5f);
+        }
+    }
+
+    public void HideStatusMessage()
+    {
+        if (statusTextUI != null)
+        {
+            statusTextUI.enabled = false;
+        }
     }
 
     // Called when '1' is pressed.
@@ -130,4 +160,5 @@ public class PlayerInventory : MonoBehaviour
         if (batteryCountUI) batteryCountUI.text = batteries.ToString();
         if (ammoCountUI) ammoCountUI.text = totalAmmo.ToString();
     }
+
 }
