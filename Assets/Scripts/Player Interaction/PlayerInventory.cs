@@ -11,31 +11,39 @@ public class PlayerInventory : MonoBehaviour
     public int batteries = 0;
     public int totalAmmo = 0;
 
+    // NEW DATA FOR LEVEL 2
+    public int evidenceFound = 0;
+
     private const int MAX_HEALTH_PACKS = 3;
     private const int MAX_BATTERIES = 3;
+    public const int MAX_EVIDENCE = 5; // The required amount
 
     // === UI REFERENCES ===
-    [Header("Inventory UI References")]
+    [Header("UI References")]
     public TextMeshProUGUI healthCountUI;
     public TextMeshProUGUI batteryCountUI;
     public TextMeshProUGUI ammoCountUI;
     public TextMeshProUGUI statusTextUI;
+
+    // NEW UI REFERENCE FOR OBJECTIVES
+    [Header("Objective UI")]
+    public TextMeshProUGUI objectiveTextUI;
 
     // === EXTERNAL CONTROLLER REFERENCES ===
     [Header("External Controllers")]
     public PlayerHealth playerHealthController;
     public FlashlightController flashlightController;
 
-    private const int HEAL_AMOUNT = 2;       // Health pack heals 2 'hits'
-    private const float RECHARGE_AMOUNT = 5f; // Battery recharges 5%
+    private const int HEAL_AMOUNT = 2;        // Health pack heals 2 'hits'
+    private const float RECHARGE_AMOUNT = 25f; // Battery recharges 25%
 
     void Start()
     {
-        UpdateInventoryUI(); // Set initial UI values to zero
+        UpdateInventoryUI();
+        UpdateObjectiveUI(); // New call to update objective text
     }
 
     // Called by PlayerPickup.cs when 'E' is pressed.
-
     // Update the return type: 0 = Success, 1 = Full
     public int AddItem(GameObject item)
     {
@@ -68,12 +76,21 @@ public class PlayerInventory : MonoBehaviour
                 totalAmmo += pickup.amount;
                 wasPickedUp = true;
                 break;
+            // NEW LOGIC FOR EVIDENCE
+            case ItemType.Evidence:
+                if (evidenceFound < MAX_EVIDENCE)
+                {
+                    evidenceFound++;
+                    wasPickedUp = true;
+                }
+                break;
         }
 
         if (wasPickedUp)
         {
             Debug.Log($"Picked up {pickup.type} for +{pickup.amount}.");
             UpdateInventoryUI();
+            UpdateObjectiveUI(); // Update objectives after pickup
             return 0;
         }
         else
@@ -87,16 +104,33 @@ public class PlayerInventory : MonoBehaviour
         }
     }
 
+    // NEW METHOD: Updates the objective text based on current evidence count
+    public void UpdateObjectiveUI()
+    {
+        if (objectiveTextUI)
+        {
+            string exitStatus = (evidenceFound >= MAX_EVIDENCE)
+                ? "<color=green>1. Find the Exit</color>"
+                : "1. Find the Exit";
+
+            objectiveTextUI.text =
+                $"{exitStatus}\n" +
+                $"2. Find all Evidence {evidenceFound}/{MAX_EVIDENCE}";
+        }
+    }
+
     // Method to briefly display a status message
     public void ShowStatusMessage(string message)
     {
         if (statusTextUI != null)
         {
+            // Make sure the object is active if it was previously disabled
+            statusTextUI.gameObject.SetActive(true);
+
             statusTextUI.text = message;
             statusTextUI.enabled = true;
 
-            // Use Invoke to turn the message off after 1.5 seconds
-            CancelInvoke(nameof(HideStatusMessage)); // Prevent stacking calls
+            CancelInvoke(nameof(HideStatusMessage));
             Invoke(nameof(HideStatusMessage), 1.5f);
         }
     }
@@ -127,7 +161,7 @@ public class PlayerInventory : MonoBehaviour
         }
         else
         {
-            Debug.Log("No health packs to use.");
+            ShowStatusMessage("No Health Packs");
         }
     }
 
@@ -149,7 +183,7 @@ public class PlayerInventory : MonoBehaviour
         }
         else
         {
-            Debug.Log("No batteries to use.");
+            ShowStatusMessage("No Batteries");
         }
     }
 
@@ -160,5 +194,4 @@ public class PlayerInventory : MonoBehaviour
         if (batteryCountUI) batteryCountUI.text = batteries.ToString();
         if (ammoCountUI) ammoCountUI.text = totalAmmo.ToString();
     }
-
 }

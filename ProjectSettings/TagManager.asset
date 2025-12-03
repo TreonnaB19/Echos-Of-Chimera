@@ -3,18 +3,17 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags: []
   tags:
   - Pickup
-
+  - ExitDoor
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - PostProcess
+  - 
   - Water
   - UI
-  - PlayerBody
+  - 
   - 
   - 
   - 

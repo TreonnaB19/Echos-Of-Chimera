@@ -11,5 +11,11 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/EchosOfChimera Levels/Tutorial Level.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 1
+    path: Assets/Scenes/EchosOfChimera Levels/Level2.unity
+    guid: b66022fb5cb335c4ca951858ed002984
+  - enabled: 1
+    path: Assets/Scenes/EchosOfChimera Levels/Level3.unity
+    guid: 88edf07761a06e847b2a606309a91397
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

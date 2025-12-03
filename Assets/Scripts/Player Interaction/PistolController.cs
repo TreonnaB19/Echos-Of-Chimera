@@ -30,7 +30,7 @@ public class PistolController : MonoBehaviour
 
     // Private state variables for the cooldown
     private float nextTimeToFire = 0f;
-    private bool canFire = true; // Initial state: ready to fire
+    
 
     void Start()
     {
@@ -58,7 +58,6 @@ public class PistolController : MonoBehaviour
         Debug.Log("Pistol Toggled. State: " + (isPistolEquipped ? "EQUIPPED" : "HOLSTERED"));
     }
 
-    // Called when Left Mouse Button is pressed AND the pistol is equipped.
     // Called when Left Mouse Button is pressed AND the pistol is equipped.
     public void FirePistol()
     {

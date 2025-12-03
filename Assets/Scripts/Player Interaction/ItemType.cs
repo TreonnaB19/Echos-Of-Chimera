@@ -4,5 +4,6 @@ public enum ItemType
 {
     HealthPack,
     Battery,
-    Ammo
+    Ammo,
+    Evidence
 }
