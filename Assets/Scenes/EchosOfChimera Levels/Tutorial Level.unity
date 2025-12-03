@@ -4311,8 +4311,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1993327218}
+  m_Children: []
   m_Father: {fileID: 1838952816}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -4355,13 +4354,13 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1993327218}
+  m_Father: {fileID: 1838952816}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -80.1, y: -98}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 122, y: -91}
   m_SizeDelta: {x: 200, y: 403.7}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0, y: 1}
 --- !u!114 &1691606905
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4423,8 +4422,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32.02
-  m_fontSizeBase: 32.02
+  m_fontSize: 24
+  m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -5549,14 +5548,13 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1691606904}
-  m_Father: {fileID: 1678154059}
+  m_Children: []
+  m_Father: {fileID: 1838952816}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -971.5001, y: 297.32004}
-  m_SizeDelta: {x: 517.00024, y: 308.56012}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -430, y: 213}
+  m_SizeDelta: {x: 500, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1993327219
 MonoBehaviour:
@@ -6275,6 +6273,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3713072770306377928, guid: af44ec9b7e4d333448923e3c5e69d241, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8440493874693901829, guid: af44ec9b7e4d333448923e3c5e69d241, type: 3}
       propertyPath: m_Name
       value: Game UI
@@ -6285,6 +6287,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1780051432819881634, guid: af44ec9b7e4d333448923e3c5e69d241, type: 3}
       insertIndex: 8
       addedObject: {fileID: 1678154059}
+    - targetCorrespondingSourceObject: {fileID: 1780051432819881634, guid: af44ec9b7e4d333448923e3c5e69d241, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1993327218}
+    - targetCorrespondingSourceObject: {fileID: 1780051432819881634, guid: af44ec9b7e4d333448923e3c5e69d241, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1691606904}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af44ec9b7e4d333448923e3c5e69d241, type: 3}
 --- !u!1660057539 &9223372036854775807
